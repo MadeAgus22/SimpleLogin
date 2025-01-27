@@ -1,12 +1,14 @@
 <?php
 
-$host = "localhost";
-$user ="root";
-$pass = "";
-$db = "login_app";
+$servername = "localhost";
+$user = "root";
+$password ="";
+$dbname = "web_login";
 
-$conn = mysqli_conect($host, $user, $pass, $db);
+//create conection 
+$conn = mysqli_connect($host, $user, $password, $dbname);
 
-if(!$conn){
-    die("Koneksi Gagal!" . mysqli_conect_error());
+//check conection 
+if (!$conn){
+    die("Conection failed :" . mysqli_connect_error());
 }

@@ -1,17 +1,32 @@
 <?php
-
 session_start();
 require 'db.php';
 
-$username = $_POST['username'];
-$password = md5($_POST['password']);
+// Mengambil data dari form
+$username = mysqli_real_escape_string($conn, $_POST['username']);
+$password = $_POST['password'];
 
-$sql = "SELECT * FROM users WHERE username = '$username' AND password = '$password'";
-$result = mysqli_queri($conn, $sql);
+// Periksa username di database
+$sql = "SELECT * FROM users WHERE username = '$username'";
+$result = mysqli_query($conn, $sql);
 
 if (mysqli_num_rows($result) > 0) {
-    $_SESSION['username'] = $username;
-    header("Location: dashboard.php");
+    $user = mysqli_fetch_assoc($result);
+    
+    // Verifikasi password dengan hash yang tersimpan
+    if (password_verify($password, $user['password'])) {
+        // Login berhasil
+        $_SESSION['username'] = $user['username']; // Menyimpan username ke session
+        header("Location: dashboard.php");
+        exit();
+    } else {
+        // Password salah
+        header("Location: index.php?error=Invalid password");
+        exit();
+    }
 } else {
-    header("Locatio: index.php?error=Invalid Username or Password");
+    // User tidak ditemukan
+    header("Location: index.php?error=User not found");
+    exit();
 }
+?>
